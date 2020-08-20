@@ -1,0 +1,46 @@
+<html>
+
+<head>
+  <title>observer</title>
+</head>
+
+<body>
+  <div>
+    hello world
+  </div>
+
+  <script type="text/javascript">
+    const observerQueue = new Set();
+    const observe = fn => observerQueue.add(fn);
+    const observable = obj => new Proxy(obj, { set });
+
+    //相当于重写了对象的set方法，用=赋值时，会触发该函数
+    //target：被代理的原始对象 key：修改的属性key value：修改后的属性值 receiver：被代理后的对象
+    function set(target, key, value, receiver) {
+      console.log('set fn triggered');
+      console.log(target, key, value, receiver);
+      //将修改后的值赋给被代理的对象target，receiver可以省略
+      const result = Reflect.set(target, key, value, receiver);
+      //执行加入的触发器
+      observerQueue.forEach(ob => ob());
+      return result;
+    }
+
+    let person = observable({
+      name: 'loki',
+      age: 23
+    });
+
+    function print() {
+      console.log(`${person.name}-${person.age}`);
+    }
+
+    observe(print);
+
+    setTimeout(() => {
+      person.name = 'nbb';
+    }, 3 * 1000);
+  </script>
+</body>
+
+</html>
