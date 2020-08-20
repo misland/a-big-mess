@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>vue start-props</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="root">
+    <div class="container">
+      <ul>
+        <!-- 只要是props里面的属性，为了避免事故，全部加上“:”，不会吃亏的 -->
+        <todo v-for="item in todo" :detail="item" :count="5" :callback="cb" :key="item.id" />
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    Vue.component('todo', {
+      props: {
+        detail: {
+          type: Object,
+          //表示参数必需，不提供控制台会报warn
+          required: true
+        },
+        count: {
+          //参数验证，若为false，控制台会报warn
+          validator: (value) => {
+            return value > 5;
+          }
+        },
+        callback: Function
+      },
+      mounted() {
+        // this.callback();
+      },
+      methods: {
+        test() {
+          //从props接收的function，还是要再封装一下的
+          this.callback();
+        }
+      },
+      template: `<li>
+                  <span>{{detail.text}}-{{count}}</span>
+                  <button @click="test">click</button>
+                </li>`
+    })
+
+    const app = new Vue({
+      el: '#root',
+      data: {
+        message: 'go away',
+        display: true,
+        todo: [{ id: 1, text: 'eating', owner: 'sb' }, { id: 2, text: 'sleeping', owner: 'sb' }]
+      },
+      methods: {
+        cb() {
+          console.log('test');
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

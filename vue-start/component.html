@@ -1,0 +1,63 @@
+<html>
+
+<head>
+  <title>vue start-component</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="root1">
+    <div class="container">
+      <p>{{message}}</p>
+      <p v-if="display">something that shouldn't be seen</p>
+      <ul>
+        <todo v-for="item in todo" :todo="item" :owner="item.owner" :key="item.id" />
+      </ul>
+      <div>
+        <my-todo v-for="item in todo" :name="item.text" :owner="item.owner" :id="item.key" />
+      </div>
+    </div>
+  </div>
+
+  <div id="root2">
+    <ul>
+      <todo v-for="item in todo" :todo="item" :owner="item.owner" :key="item.id" />
+    </ul>
+  </div>
+
+  <script type="text/javascript">
+    //全局组件，app和app2两个vue实例中都可以使用
+    Vue.component('todo', {
+      props: ['todo', 'owner'],
+      template: `<li>{{todo.text}}-{{owner}}</li>`
+    })
+
+    //局部组件，需要在对应的vue实例中引入方可使用
+    let TodoList = {
+      props: ['name', 'owner'],
+      template: `<p>{{name}}-{{owner}}</p>`
+    }
+
+    const app = new Vue({
+      el: '#root1',
+      components: {
+        MyTodo: TodoList
+      },
+      data: {
+        message: 'go away',
+        display: true,
+        todo: [{ id: 1, text: 'eating', owner: 'sb' }, { id: 2, text: 'sleeping', owner: 'sb' }]
+      }
+    });
+
+    const app2 = new Vue({
+      el: '#root2',
+      data: {
+        todo: [{ id: 1, text: 'watching', owner: 'sb' }, { id: 2, text: 'walking', owner: 'sb' }]
+      }
+    })
+  </script>
+</body>
+
+</html>
