@@ -14,6 +14,7 @@
     const observe = fn => observerQueue.add(fn);
     const observable = obj => new Proxy(obj, { set });
 
+    //https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy
     //相当于重写了对象的set方法，用=赋值时，会触发该函数
     //target：被代理的原始对象 key：修改的属性key value：修改后的属性值 receiver：被代理后的对象
     function set(target, key, value, receiver) {
